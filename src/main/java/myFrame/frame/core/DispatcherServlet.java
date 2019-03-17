@@ -16,7 +16,6 @@ import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
-    private Application application;
     private Map<String, Method> mapRoute;
     private Map<String, Object> mapUriController;
 
@@ -26,7 +25,7 @@ public class DispatcherServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         jsonSerializer = new JsonSerializer();
 
-        application = new Application(Main.class);
+        Application application = new Application(Main.class);
         application.init();
 
         mapRoute = application.getMapRouter().getHandleMethods();

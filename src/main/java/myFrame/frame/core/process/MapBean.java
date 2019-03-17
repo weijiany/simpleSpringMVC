@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class MapBean extends MyAbstractMap {
+public class MapBean extends AbstractBeanFactory {
 
     public MapBean(String fileName) {
         super(fileName);

@@ -4,13 +4,14 @@ import lombok.Getter;
 import myFrame.frame.annotaion.Autowired;
 import myFrame.frame.annotaion.Controller;
 import myFrame.frame.annotaion.RequestMapping;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MapRouter extends MyAbstractMap {
+public class MapRouter extends AbstractBeanFactory {
 
     @Getter
     private Map<String, Method> handleMethods;
@@ -29,7 +30,7 @@ public class MapRouter extends MyAbstractMap {
             Class<?> aClass = Class.forName(fileName);
             if (!aClass.isAnnotationPresent(Controller.class)) return null;
 
-            Object obj = getBean(aClass);
+            Object obj = newControllerInstanceAndDependencyInjection(aClass);
 
             String basePath = aClass.getAnnotation(RequestMapping.class).value();
 
@@ -49,7 +50,7 @@ public class MapRouter extends MyAbstractMap {
         throw new RuntimeException();
     }
 
-    private Object getBean(Class<?> aClass) {
+    private Object newControllerInstanceAndDependencyInjection(Class<?> aClass) {
         try {
             Object obj = aClass.newInstance();
             Arrays.stream(aClass.getDeclaredFields())
@@ -69,9 +70,8 @@ public class MapRouter extends MyAbstractMap {
         throw new RuntimeException();
     }
 
-    private String getUpperFirstCharName(String name) {
-        char[] chars = name.toCharArray();
-        chars[0] = Character.toUpperCase(chars[0]);
-        return new String(chars);
+    @Override
+    public <T> T getBean(String name, Class<T> aClass) {
+        throw new NotImplementedException();
     }
 }

@@ -36,9 +36,9 @@ public class MyController {
     @RequestMapping("persons")
     public List<Person> persons() {
         Person anotherPerson = new Person("Bob", new Sex("Female"));
-        return new ArrayList<Person>() {{
-            add(person);
-            add(anotherPerson);
-        }};
+        ArrayList<Person> people = new ArrayList<>();
+        people.add(person);
+        people.add(anotherPerson);
+        return people;
     }
 }

@@ -8,14 +8,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public abstract class MyAbstractMap {
+public abstract class AbstractBeanFactory implements BeanFactory {
 
-    protected String fileName;
+    private String fileName;
 
     @Getter
     protected Map<String, Object> map;
 
-    public MyAbstractMap(String fileName) {
+    AbstractBeanFactory(String fileName) {
         this.fileName = fileName;
     }
 
@@ -25,7 +25,7 @@ public abstract class MyAbstractMap {
         this.map = getBeans(fileName, "");
     }
 
-    public Map<String, Object> getBeans(String fileName, String className) {
+    private Map<String, Object> getBeans(String fileName, String className) {
         Map<String, Object> result = new HashMap<>();
         File packageFile = new File(fileName);
         if (packageFile.isDirectory()) {
