@@ -1,7 +1,7 @@
 package myFrame.project.config;
 
-import myFrame.frame.annotaion.Bean;
-import myFrame.frame.annotaion.Configuration;
+import myFrame.frame.annotaion.bean.Bean;
+import myFrame.frame.annotaion.bean.Configuration;
 import myFrame.project.models.Person;
 import myFrame.project.models.Sex;
 

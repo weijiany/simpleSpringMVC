@@ -1,8 +1,9 @@
 package myFrame.frame.core;
 
 import myFrame.Main;
-import myFrame.frame.annotaion.ResponseBody;
+import myFrame.frame.annotaion.web.ResponseBody;
 import myFrame.frame.core.json.JsonSerializer;
+import myFrame.frame.core.process.MapRouter;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -16,8 +17,8 @@ import java.util.Map;
 
 public class DispatcherServlet extends HttpServlet {
 
-    private Map<String, Method> mapRoute;
-    private Map<String, Object> mapUriController;
+    private Map<String, String> mapRoute;
+    private MapRouter router;
 
     private JsonSerializer jsonSerializer;
 
@@ -28,8 +29,8 @@ public class DispatcherServlet extends HttpServlet {
         Application application = new Application(Main.class);
         application.init();
 
-        mapRoute = application.getMapRouter().getHandleMethods();
-        mapUriController = application.getMapRouter().getMap();
+        mapRoute = application.getMapRouter().getMap();
+        router = application.getMapRouter();
     }
 
     @Override
@@ -47,10 +48,10 @@ public class DispatcherServlet extends HttpServlet {
         doPost(request, response);
     }
 
-    private void dispatch(HttpServletRequest req, HttpServletResponse resp) throws IOException, InvocationTargetException, IllegalAccessException {
+    private void dispatch(HttpServletRequest req, HttpServletResponse resp) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         String url = req.getContextPath() + req.getRequestURI();
-        Method method = mapRoute.get(url);
-        Object obj = mapUriController.get(url);
+        Object obj = router.getController(url);
+        Method method = obj.getClass().getMethod(mapRoute.get(url));
         Object result = method.invoke(obj);
 
         String body = result.toString();

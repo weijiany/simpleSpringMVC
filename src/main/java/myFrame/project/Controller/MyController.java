@@ -1,9 +1,9 @@
 package myFrame.project.Controller;
 
-import myFrame.frame.annotaion.Autowired;
-import myFrame.frame.annotaion.Controller;
-import myFrame.frame.annotaion.RequestMapping;
-import myFrame.frame.annotaion.ResponseBody;
+import myFrame.frame.annotaion.bean.Autowired;
+import myFrame.frame.annotaion.web.Controller;
+import myFrame.frame.annotaion.web.RequestMapping;
+import myFrame.frame.annotaion.web.ResponseBody;
 import myFrame.project.models.Person;
 import myFrame.project.models.Sex;
 

@@ -1,49 +1,44 @@
 package myFrame.frame.core.process;
 
-import lombok.Getter;
-import myFrame.frame.annotaion.Autowired;
-import myFrame.frame.annotaion.Controller;
-import myFrame.frame.annotaion.RequestMapping;
+import myFrame.frame.annotaion.bean.Autowired;
+import myFrame.frame.annotaion.web.Controller;
+import myFrame.frame.annotaion.web.RequestMapping;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MapRouter extends AbstractBeanFactory {
 
-    @Getter
-    private Map<String, Method> handleMethods;
+    private Map<String, Class<?>> controllerClass;
 
     private MapBean mapBean;
 
     public MapRouter(String fileName, MapBean mapBean) {
         super(fileName);
         this.mapBean = mapBean;
-        handleMethods = new HashMap<>();
+        controllerClass = new HashMap<>();
     }
 
     @Override
-    public Map<String, Object> getBeanMapClass(String fileName) {
+    public Map<String, String> getBeanMapClass(String fileName) {
+        Map<String, String> routeMap = new HashMap<>();
         try {
             Class<?> aClass = Class.forName(fileName);
             if (!aClass.isAnnotationPresent(Controller.class)) return null;
 
-            Object obj = newControllerInstanceAndDependencyInjection(aClass);
-
             String basePath = aClass.getAnnotation(RequestMapping.class).value();
 
-            Map<String, Object> result = new HashMap<>();
             Arrays.stream(aClass.getMethods()).forEach(method -> {
                 if (!method.isAnnotationPresent(RequestMapping.class)) return;
 
                 String path = method.getAnnotation(RequestMapping.class).value();
                 String url = basePath + path;
-                result.put(url, obj);
-                handleMethods.put(url, method);
+                controllerClass.put(url, aClass);
+                routeMap.put(url, method.getName());
             });
-            return result;
+            return routeMap;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -68,6 +63,10 @@ public class MapRouter extends AbstractBeanFactory {
             e.printStackTrace();
         }
         throw new RuntimeException();
+    }
+
+    public Object getController(String url) {
+        return newControllerInstanceAndDependencyInjection(controllerClass.get(url));
     }
 
     @Override

@@ -1,7 +1,7 @@
 package myFrame.frame.core.process;
 
-import myFrame.frame.annotaion.Bean;
-import myFrame.frame.annotaion.Configuration;
+import myFrame.frame.annotaion.bean.Bean;
+import myFrame.frame.annotaion.bean.Configuration;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -16,30 +16,32 @@ public class MapBean extends AbstractBeanFactory {
     }
 
     @Override
-    public Map<String, Object> getBeanMapClass(String fileName) {
+    public Map<String, String> getBeanMapClass(String fileName) {
         try {
             Class aClass = Class.forName(fileName);
             if (!aClass.isAnnotationPresent(Configuration.class)) return null;
 
-            Object obj = aClass.newInstance();
             Method[] methods = aClass.getMethods();
             return Arrays.stream(methods)
                     .filter(method -> method.isAnnotationPresent(Bean.class))
-                    .collect(Collectors.toMap(Method::getName, method -> {
-                        try {
-                            return method.invoke(obj);
-                        } catch (IllegalAccessException | InvocationTargetException e) {
-                            e.printStackTrace();
-                        }
-                        throw new RuntimeException();
-                    }));
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+                    .collect(Collectors.toMap(Method::getName, method -> fileName + "#" + method.getName()));
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
         throw new RuntimeException();
     }
 
-    public <T> T getBean(String name, Class<T> aClass) {
-        return aClass.cast(map.get(name));
+    public <T> T getBean(String name, Class<T> resultClass) {
+        try {
+            // map 中以 class {全限定名}#{方法名}
+            String[] info = map.get(name).split("#");
+            Object o = Class.forName(info[0]).newInstance();
+            Method method = o.getClass().getMethod(info[1]);
+            return resultClass.cast(method.invoke(o));
+        } catch (IllegalAccessException | InvocationTargetException | ClassNotFoundException | InstantiationException | NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+
+        throw new RuntimeException();
     }
 }

@@ -13,20 +13,20 @@ public abstract class AbstractBeanFactory implements BeanFactory {
     private String fileName;
 
     @Getter
-    protected Map<String, Object> map;
+    protected Map<String, String> map;
 
     AbstractBeanFactory(String fileName) {
         this.fileName = fileName;
     }
 
-    public abstract Map<String, Object> getBeanMapClass(String fileName);
+    public abstract Map<String, String> getBeanMapClass(String fileName);
 
     public void init() {
         this.map = getBeans(fileName, "");
     }
 
-    private Map<String, Object> getBeans(String fileName, String className) {
-        Map<String, Object> result = new HashMap<>();
+    private Map<String, String> getBeans(String fileName, String className) {
+        Map<String, String> result = new HashMap<>();
         File packageFile = new File(fileName);
         if (packageFile.isDirectory()) {
             result.putAll(Arrays.stream(Objects.requireNonNull(packageFile.listFiles()))
@@ -39,7 +39,7 @@ public abstract class AbstractBeanFactory implements BeanFactory {
             if (!className.endsWith(".class")) return result;
 
             String path = className.substring(1);
-            Map<String, Object> beanNameMapClass = getBeanMapClass(path.replaceAll(".class", ""));
+            Map<String, String> beanNameMapClass = getBeanMapClass(path.replaceAll(".class", ""));
             if (beanNameMapClass != null && !beanNameMapClass.isEmpty())
                 result.putAll(beanNameMapClass);
         }
