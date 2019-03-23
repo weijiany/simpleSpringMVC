@@ -35,9 +35,8 @@ public class DispatcherServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             dispatch(request, response);
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getOutputStream().write("server error".getBytes());
+        } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
+            e.printStackTrace();
         }
     }
 
@@ -49,7 +48,7 @@ public class DispatcherServlet extends HttpServlet {
     private void dispatch(HttpServletRequest req, HttpServletResponse resp) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         String url = req.getContextPath() + req.getRequestURI();
         Object obj = mapRouter.getController(url);
-        Method method = obj.getClass().getMethod(mapRouter.getMthodName(url));
+        Method method = obj.getClass().getMethod(mapRouter.getMethodName(url));
         Object result = method.invoke(obj);
 
         String body = result.toString();

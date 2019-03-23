@@ -11,6 +11,7 @@ public class InitContainer {
     }
 
     private void createBeans(String initPath, String className) {
+
         File file = new File(initPath);
         if (file.isDirectory())
             for (File child : Objects.requireNonNull(file.listFiles()))

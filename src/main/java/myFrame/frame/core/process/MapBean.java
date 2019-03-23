@@ -21,6 +21,7 @@ public class MapBean implements BeanFactory {
     @Override
     public <T> T getBean(String name, Class<T> resultClass) {
         try {
+            if (!beanContainer.containsKey(name)) return null;
             String[] info = beanContainer.get(name).split("#");
             Object o = Class.forName(info[0]).newInstance();
             Method method = o.getClass().getMethod(info[1]);

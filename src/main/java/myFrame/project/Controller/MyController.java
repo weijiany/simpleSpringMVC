@@ -6,6 +6,7 @@ import myFrame.frame.annotaion.web.RequestMapping;
 import myFrame.frame.annotaion.web.ResponseBody;
 import myFrame.project.models.Person;
 import myFrame.project.models.Sex;
+import myFrame.project.service.MyService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,21 +16,18 @@ import java.util.List;
 public class MyController {
 
     @Autowired
-    private Person person;
-
-    @Autowired
-    private Sex sex;
+    private MyService myService;
 
     @ResponseBody
     @RequestMapping("person")
     public Person person() {
-        return person;
+        return myService.getPerson();
     }
 
     @ResponseBody
     @RequestMapping("name")
     public Sex sex() {
-        return sex;
+        return myService.getSex();
     }
 
     @ResponseBody
@@ -37,7 +35,7 @@ public class MyController {
     public List<Person> persons() {
         Person anotherPerson = new Person("Bob", new Sex("Female"));
         ArrayList<Person> people = new ArrayList<>();
-        people.add(person);
+        people.add(myService.getPerson());
         people.add(anotherPerson);
         return people;
     }
