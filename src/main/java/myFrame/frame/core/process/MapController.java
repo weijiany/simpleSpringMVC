@@ -61,7 +61,11 @@ public class MapController implements BeanFactory {
                     .forEach(field -> {
                         try {
                             field.setAccessible(true);
-                            field.set(bean, autoWiredField(field.getName(), field.getType()));
+                            String fieldName = field.getName();
+                            Object o = autoWiredField(fieldName, field.getType());
+
+                            o = BeanCoreFactory.getServiceContainer().proxyObject(fieldName, o);
+                            field.set(bean, o);
                         } catch (IllegalAccessException e) {
                             e.printStackTrace();
                         }
@@ -70,7 +74,7 @@ public class MapController implements BeanFactory {
     private Object autoWiredField(String name, Class<?> type) {
         Object bean = BeanCoreFactory.getBeansContainer()
                 .stream()
-                .map(f -> f.getBean(name, type))
+                .map(container -> container.getBean(name, type))
                 .filter(Objects::nonNull)
                 .findFirst().orElseThrow(RuntimeException::new);
         setAutoWiredField.accept(Arrays.stream(bean.getClass().getDeclaredFields()), bean);

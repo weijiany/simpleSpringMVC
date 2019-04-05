@@ -1,6 +1,5 @@
 package myFrame.frame.core;
 
-import myFrame.Main;
 import myFrame.frame.annotaion.web.ResponseBody;
 import myFrame.frame.core.json.JsonSerializer;
 import myFrame.frame.core.process.BeanCoreFactory;
@@ -25,8 +24,9 @@ public class DispatcherServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         jsonSerializer = new JsonSerializer();
 
+        String scanPackage = config.getInitParameter("scanPackage");
         Application application = new Application();
-        application.init(Main.class);
+        application.init(scanPackage);
 
         mapRouter = BeanCoreFactory.getControllerContainer();
     }
@@ -46,6 +46,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void dispatch(HttpServletRequest req, HttpServletResponse resp) throws IOException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+
         String url = req.getContextPath() + req.getRequestURI();
         Object obj = mapRouter.getController(url);
         Method method = obj.getClass().getMethod(mapRouter.getMethodName(url));

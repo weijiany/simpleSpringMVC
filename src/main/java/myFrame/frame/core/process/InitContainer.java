@@ -6,12 +6,11 @@ import java.util.Objects;
 
 public class InitContainer {
 
-    public void init(String initPath) {
-        createBeans(initPath, "");
+    public void init(String initPath, String className) {
+        createBeans(initPath, className);
     }
 
     private void createBeans(String initPath, String className) {
-
         File file = new File(initPath);
         if (file.isDirectory())
             for (File child : Objects.requireNonNull(file.listFiles()))
@@ -19,9 +18,8 @@ public class InitContainer {
         else {
             if (!className.endsWith(".class")) return;
 
-            String path = className.substring(1);
             try {
-                String qualifiedName = path.replace(".class", "");
+                String qualifiedName = className.replace(".class", "");
                 Class<?> aClass = Class.forName(qualifiedName);
                 Annotation[] annotations = aClass.getAnnotations();
                 for (Annotation annotation : annotations) {

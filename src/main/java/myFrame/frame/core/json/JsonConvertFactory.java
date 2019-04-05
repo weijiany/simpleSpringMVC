@@ -7,6 +7,8 @@ import java.util.Set;
 final class JsonConvertFactory {
 
     static JsonConvert getJsonConvert(Object obj) {
+        if (obj == null)
+            return null;
         if (isArray(obj))
             return new ArrayToJson();
         else if (isListType(obj))

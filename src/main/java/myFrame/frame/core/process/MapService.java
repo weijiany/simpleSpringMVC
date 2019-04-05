@@ -1,10 +1,16 @@
 package myFrame.frame.core.process;
 
+import lombok.Getter;
+import myFrame.frame.core.AspectHandler;
+import myFrame.frame.util.Util;
+
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MapService implements BeanFactory {
 
+    @Getter
     private Map<String, String> serviceContainer;
 
     public MapService() {
@@ -25,15 +31,30 @@ public class MapService implements BeanFactory {
         throw new RuntimeException();
     }
 
-    @Override
-    public void addBean(Class<?> aClass, String qualifiedName) {
-        String key = firstCharToLow(aClass.getSimpleName());
-        serviceContainer.put(key, qualifiedName);
+    public <T> T proxyObject(String name, T target) {
+        try {
+            MapAspect aspectContainer = BeanCoreFactory.getAspectContainer();
+            if (aspectContainer.containKey(name)) {
+                String targetMethodName = aspectContainer.getTargetMethodName(name);
+                AspectHandler handler = aspectContainer.getAspectHandler(name);
+
+                Method targetMethod;
+                targetMethod = target.getClass().getMethod(targetMethodName);
+                handler.registerMethod(targetMethod);
+                target = (T) handler.bind(target);
+            }
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        return target;
     }
 
-    private String firstCharToLow(String name) {
-        char[] chars = name.toCharArray();
-        chars[0] = Character.toLowerCase(chars[0]);
-        return new String(chars);
+    @Override
+    public void addBean(Class<?> aClass, String qualifiedName) {
+        Class<?> aInterface = aClass.getInterfaces()[0];
+        String key = Util.firstCharToLow(aInterface.getSimpleName());
+        if (!serviceContainer.containsKey(key))
+            serviceContainer.put(key, qualifiedName);
     }
+
 }

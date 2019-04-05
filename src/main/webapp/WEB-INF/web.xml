@@ -4,9 +4,14 @@
 
 <web-app>
     <display-name>Archetype Created Web Application</display-name>
+
     <servlet>
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>myFrame.frame.core.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>scanPackage</param-name>
+            <param-value>myFrame.project</param-value>
+        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
 

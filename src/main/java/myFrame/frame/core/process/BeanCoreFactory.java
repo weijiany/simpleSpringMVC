@@ -1,5 +1,6 @@
 package myFrame.frame.core.process;
 
+import myFrame.frame.annotaion.aspect.Aspect;
 import myFrame.frame.annotaion.bean.Configuration;
 import myFrame.frame.annotaion.bean.Service;
 import myFrame.frame.annotaion.web.Controller;
@@ -17,6 +18,7 @@ public class BeanCoreFactory {
         classMap.put(Configuration.class, new MapBean());
         classMap.put(Controller.class, new MapController());
         classMap.put(Service.class, new MapService());
+        classMap.put(Aspect.class, new MapAspect());
     }
 
     public static BeanFactory createBeanFactory(Class<?> aClass) {
@@ -33,6 +35,10 @@ public class BeanCoreFactory {
 
     public static MapService getServiceContainer() {
         return (MapService) classMap.get(Service.class);
+    }
+
+    public static MapAspect getAspectContainer() {
+        return (MapAspect) classMap.get(Aspect.class);
     }
 
     public static List<BeanFactory> getBeansContainer() {

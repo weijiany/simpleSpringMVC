@@ -13,13 +13,9 @@ public class Application {
         initContainer = new InitContainer();
     }
 
-    public void init(Class<?> aClass) {
-        initContainer.init(getApplicationRootPath(aClass));
-    }
-
-    private String getApplicationRootPath(Class aClass) {
-        URL url = aClass.getClassLoader().getResource("");
-        String filePath = Objects.requireNonNull(url).getFile();
-        return filePath.substring(0, filePath.length() - 1);
+    public void init(String packageName) {
+        String path = packageName.replace(".", "/");
+        URL resource = this.getClass().getClassLoader().getResource("");
+        initContainer.init(Objects.requireNonNull(resource).getPath() + path, packageName);
     }
 }
